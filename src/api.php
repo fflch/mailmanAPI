@@ -281,7 +281,7 @@ class MailmanAPI {
 			'form_params' => [
 				/*'csrf_token' => $token,*/
 				'default_member_moderation' => '1',
-				'member_moderation_action' => '2',
+				'member_moderation_action' => '1',
 
 				'member_moderation_notice' => '',
                 'accept_these_nonmembers' => join(chr(10), $nonmembers),
@@ -290,7 +290,7 @@ class MailmanAPI {
                 'discard_these_nonmembers' => '',
                 'nonmember_rejection_notice' => '',
 
-				'generic_nonmember_action' => '3',
+				'generic_nonmember_action' => '2',
 				'forward_auto_discards' => '0',
 				'submit' => 'Send'
 			]

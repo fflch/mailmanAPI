@@ -298,6 +298,150 @@ class MailmanAPI {
         return;
     }
 
+     /*
+     * Set general configuration
+     */
+    public function configGeneral() {
+        $response = $this->client->request('POST', $this->mailmanURL . '/general', [
+            'form_params' => [
+		/*O nome público da lista (faça somente modificações capitalizadas).
+		 * Resposta: eventosdf_fflch
+		 */
+		'real_name' => 'eventosdf_fflch',
+		/*O endereço de email do administrador da lista. São permitidos múltiplos endereços:
+		 *Resposta: fflchsti@usp.br
+		 */
+		'owner' => 'fflchsti@usp.br',
+		/*O endereço de email do moderador da lista. No caso de múltiplos endereços de moderador:
+		 *Resposta: fflchsti@usp.br
+		 */
+		'moderator' => 'fflchsti@usp.br',
+		/*Uma frase resumo identificando esta lista.
+		 *Resposta:
+		 */
+		'description' => '',
+		/*Uma descrição introdutória - em poucos parágrafos - sobre a lista. Ela será incluída, como html, 
+		 *no topo da página listinfo. O pressionamento de enter finaliza um parágrafo 
+		 *- veja os detalhes para mais informações.
+		 *Resposta:
+		 */
+                'info' => '',
+		/*Prefixo colocado na linha de assunto das postagens nas listas.
+		 *Resposta:[EventosDF]
+		 */
+                'subject_prefix' => '[EventosDF]',
+		/*Ocultar o remetente da mensagem, substituindo-o pelo endereço do nome da lista (Remove o campo From, Sender e Reply-To)
+		 *Resposta:Não
+		 */
+		'anonymous_list' => '0',
+		/*Qualquer cabeçalho Reply-To: encontrado na mensagem original deverá ser retirados? 
+		 *Caso isto aconteça, isto será feito mesmo que o cabeçalho Reply-To: seja adicionado ou não pelo Mailman.
+		 *Resposta:Não
+		 */
+		'first_strip_reply_to' => '0',
+		/*Onde as respostas para as mensagens desta lista deverão ser direcionadas? 
+		 *Remetente é extremamente recomendado para a maioria das listas de discussão.
+		 *Resposta:Remetente
+		 */
+		'reply_goes_to_list' => '0',
+		/*Cabeçalho Reply-To: explicito.
+		 *Resposta:
+		 */
+		'reply_to_address' => '',
+		/*Enviar lembretes de senhas para o endereço, eg, "-owner" ao invés de diretamente para o usuário.
+		 *Resposta:Sim
+		 */
+		'umbrella_list' => '1',
+		/*Sufixo que será usado quando esta lista for cascateada para outras listas, 
+		 *de acordo com a configuração anterior "umbrella_list".
+		 *Resposta:-owner
+		 */
+		'umbrella_member_suffix' => '-owner',
+		/*Enviar lembretes mensais de senha?
+		 *Resposta:Não
+		 */
+		'send_reminders' => '0',
+		/*Texto específico da lista adicionado a mensagem de boas vindas do novo inscrito
+		 *Resposta:
+		 */
+		'welcome_msg' => '',
+		/*Enviar mensagem de boas vindas para novos membros inscritos?
+		 *Resposta:Não
+		 */
+		'send_welcome_msg' => '0',
+		/*Texto que será enviado a pessoas deixando a lista. Caso esteja vazio, 
+		 *nenhum texto especial será adicionado a mensagem de remoção.
+		 *Resposta:Sua inscrição nesta lista foi cancelada.
+		 */
+		'goodbye_msg' => 'Sua inscrição nesta lista foi cancelada.',
+		/*Enviar mensagens de boas vindas para membros quando eles são desinscritos.
+		 *Resposta:Não
+		 */
+		'send_goodbye_msg' => '0',
+		/*Os moderadores de lista devem obter uma notificação imediata de novas requisição, 
+		 *assim como também as notícias diárias coletadas?
+		 *Resposta:Não
+		 */
+		'admin_immed_notify' => '0',
+		/*O administrador deverá receber notificações de inscrições e desinscrições?
+		 *Resposta:Não
+		 */
+		'admin_notify_mchanges' => '0',
+		/*Enviar um email para o remetente quando sua postagem está aguardando aprovação?
+		 *Resposta:Não
+		 */
+		'respond_to_post_requests' => '0',
+		/*Moderação de emergência para o tráfego de todas as listas:
+		 *Resposta:Não
+		 */
+		'emergency' => '0',
+		/*Opções padrões para novos membros entrando nesta lista.
+		 *Resposta:Esconder o endereço do membro / Não enviar uma cópia da própria postagem do membro / Filtrar mensagens
+		 *duplicadas de membros da lista (se possível)
+		 */
+		'new_member_options' => 'hide',
+		'new_member_options' => 'notmetoo',
+		'new_member_options' => 'nodupes',
+		/*(Filtro Administrivia) Verifica postagens e intercepta aquelas que se parecem com requisições administrativas.
+		 *Resposta:Não
+		 */
+		'administrivia' => '0',
+		/*Tamanho máximo em kilobytes (KB) do corpo da mensagem. Use 0 para não ter limite.
+		 *Resposta:0
+		 */
+		'max_message_size' => '0',
+		/*Maximum number of members to show on one page of the Membership List.
+		 *Resposta:100
+		 */
+		'admin_member_chunksize' => '100',
+		/*Nome de máquina que esta listas prefere para emails.
+		 *Resposta:listas.usp.br
+		 */
+		'host_name' => 'listas.usp.br',
+		/*As mensagens desta lista de discussão devem incluir os cabeçalhos da RFC 2369 
+		 *(i.e. List-*? Sim é altamente recomendável.
+		 *Resposta:Não
+		 */
+		'include_rfc2369_headers' => '0',
+		/*As postagens devem incluir o cabeçalho List-Post:?
+		 *Resposta:Não
+		 */
+		'include_list_post_header' => '0',
+		/*Should the Sender header be rewritten for this mailing list to avoid stray bounces? Yes is recommended.
+		 *Resposta:Sim
+		 */
+		'include_sender_header' => '1',
+		/*Descartar mensagens mantidas que ultrapassam esta quantidade de dias. Use 0 para não descartar automaticamente.
+		 *Resposta:1
+		 */
+		'max_days_to_hold' => '1',
+		'submit' => 'Send'
+		]
+	]);
+
+        return;
+    }
+
     /**
      * Set privacy/recipient configuration
      */

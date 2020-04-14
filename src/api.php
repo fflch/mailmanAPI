@@ -577,6 +577,52 @@ class MailmanAPI {
         return;
     }
 
+    /**
+     * Set nondigest configuration
+     */
+    public function configNondigest() {
+        $response = $this->client->request('POST', $this->mailmanURL . '/nondigest', [
+            'form_params' => [
+
+		/*Os inscritos na lista podem receber um email imediatamente, ao invés de digests em lote?
+		 *Resposta:Sim
+		 */
+		'nondigestable' => '1',
+
+		/*Cabeçalho adicionado ao email enviado para membros regulares
+		 *Resposta:
+		 */
+		'msg_header' => '',
+
+		/*Rodapé adicionado ao email enviado para os membros regulares da lista
+		 *Resposta:
+		 */
+		'msg_footer' => '',
+
+		/*Fazer link de anexos de mensagens de entregas regulares?
+		 *Resposta:Não
+		 */
+		'scrub_nondigest' => '0',
+
+		/*Other mailing lists on this site whose members are excluded from the regular (non-digest)
+		 *delivery if those list addresses appear in a To: or Cc: header.
+		 *Resposta:
+		 */
+		'regular_exclude_lists' => '',
+
+		/*Other mailing lists on this site whose members are included in the regular (non-digest)
+		 *delivery if those list addresses don't appear in a To: or Cc: header.
+		 *Resposta:
+		 */
+		'regular_include_lists' => '',
+
+	        'submit' => 'Send'
+            ]
+        ]);
+
+        return;
+    }
+
 
 }
 

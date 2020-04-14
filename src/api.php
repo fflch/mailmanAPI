@@ -442,26 +442,6 @@ class MailmanAPI {
         return;
     }
 
-    /**
-     * Set privacy/recipient configuration
-     */
-    public function configPrivacyRecipient() {
-        $response = $this->client->request('POST', $this->mailmanURL . '/privacy/recipient', [
-            'form_params' => [
-                /* As postagens devem ter o nome da lista no campo destino (to, cc) 
-                 * da lista (ou estar junto de nomes de aliases, especificados abaixo)?
-                 * Resposta: Não
-                 */
-                'require_explicit_destination' => '0',
-
-                'acceptable_aliases' => '',
-                'max_num_recipients' => '0',
-                'submit' => 'Send'
-            ]
-        ]);
-
-        return;
-    }
 
     /**
      * Set privacy/subscribing configuration
@@ -498,6 +478,91 @@ class MailmanAPI {
 		 *Resposta:Sim
 		 */
 		'obscure_addresses' => '1',
+                'submit' => 'Send'
+            ]
+        ]);
+
+        return;
+    }
+
+    /**
+     * Set privacy/recipient configuration
+     */
+    public function configPrivacyRecipient() {
+        $response = $this->client->request('POST', $this->mailmanURL . '/privacy/recipient', [
+            'form_params' => [
+                /* As postagens devem ter o nome da lista no campo destino (to, cc) 
+                 * da lista (ou estar junto de nomes de aliases, especificados abaixo)?
+                 * Resposta: Não
+                 */
+                'require_explicit_destination' => '0',
+
+                'acceptable_aliases' => '',
+                'max_num_recipients' => '0',
+                'submit' => 'Send'
+            ]
+        ]);
+
+        return;
+    }
+
+    /**
+     * Set digest configuration
+     */
+    public function configDigest() {
+        $response = $this->client->request('POST', $this->mailmanURL . '/digest', [
+            'form_params' => [
+
+                /*Os membros da lista podem receber o tráfego da lista dividido em digests?
+		 * Resposta:Sim
+                 */
+		'digestable' => '1',
+
+                /*Que modo de entrega é o padrão para novos usuários?
+		 * Resposta:Regular
+                 */
+		'digest_is_default' => '0',
+
+                /*Quando resolvendo digests, que formato é o padrão?
+		 * Resposta:Puro
+                 */
+		'mime_is_default_digest' => '0',
+
+                /*Qual é o tamanho em OK que o digest deverá ter antes de ser enviado?
+		 * Resposta:30
+                 */
+		'digest_size_threshhold' => '30',
+
+                /*O digest deverá ser despachado diariamente quando o tamanho dele não atingir o limite mínimo?
+		 * Resposta:Sim
+                 */
+		'digest_send_periodic' => '1',
+
+                /*Cabeçalho adicionado a cada digest
+		 * Resposta:
+                 */
+		'digest_header' => '',
+
+                /*Legenda adicionado a cada digest
+		 * Resposta:
+                 */
+		'digest_footer' => '',
+
+		/*Com que freqüência o volume do novo digest será iniciado?
+		 * Resposta:Anual
+                 */
+		'digest_volume_frequency' => '0',
+		
+		/*O Mailman deve iniciar um novo volume digest.
+		 * Resposta:Não
+                 */
+		'_new_volume' => '0',
+
+		/*O Mailman deve enviar o próximo digest agora, caso não esteja vazio?
+		 * Resposta:Não
+                 */
+		'_send_digest_now' => '0',
+
                 'submit' => 'Send'
             ]
         ]);

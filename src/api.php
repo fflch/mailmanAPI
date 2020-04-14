@@ -463,6 +463,48 @@ class MailmanAPI {
         return;
     }
 
+    /**
+     * Set privacy/subscribing configuration
+     */
+    public function configPrivacySubscribing() {
+        $response = $this->client->request('POST', $this->mailmanURL . '/privacy/subscribing', [
+            'form_params' => [
+		/*Avisar esta lista quando pessoas perguntarem que listas estão nesta máquina?
+		 *Resposta:Não
+		 */
+		'advertised' => '0',
+	
+		/*Que passos são requeridos para a inscrição?
+		 *Resposta:Confirmar e aprovar
+		 */
+		'subscribe_policy' => '2',
+	
+		/*É requerida a aprovação do moderador para requisições de remoção? (Não é recomendado).
+		 *Resposta:Não
+		 */
+		'unsubscribe_policy' => '0',
+	
+		/*Lista de endereços que estão banidos de serem membros desta lista de discussão.
+		 *Resposta:
+		 */
+		'ban_list' => '',
+	
+		/*Quem poderá ver a lista de inscrição?
+		 *Resposta:Somente administradores da lista
+		 */
+		'private_roster' => '2',
+	
+		/*Mostra endereços de membros assim eles não serão reconhecidos diretamente como endereços de email?
+		 *Resposta:Sim
+		 */
+		'obscure_addresses' => '1',
+                'submit' => 'Send'
+            ]
+        ]);
+
+        return;
+    }
+
 
 }
 

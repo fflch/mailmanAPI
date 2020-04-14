@@ -496,8 +496,15 @@ class MailmanAPI {
                  * Resposta: Não
                  */
                 'require_explicit_destination' => '0',
-
+		
+		/*Nomes aliases (expressões) que qualificam os nomes de destinos to e cc para esta lista.
+		 *Resposta:
+		 */
                 'acceptable_aliases' => '',
+
+		/*Pondo um limite aceitável no número de recipientes para postagem.
+		 *Resposta: 0
+		 */
                 'max_num_recipients' => '0',
                 'submit' => 'Send'
             ]

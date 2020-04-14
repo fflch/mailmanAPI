@@ -623,6 +623,67 @@ class MailmanAPI {
         return;
     }
 
+    /**
+     * Set bounce configuration
+     */
+    public function configBounce() {
+        $response = $this->client->request('POST', $this->mailmanURL . '/bounce', [
+            'form_params' => [
+
+		/*O Mailman deverá fazer processamento automático de retornos?
+		 *Resposta:Sim
+		 */
+		'bounce_processing' => '1',
+
+
+		/*O número máximo de retornos antes de desativar a inscrição do membro. Este valor pode ser 
+		 *um número de ponto flutuante.
+		 *Resposta:5.0
+		 */
+		'bounce_score_threshold' => '5.0',
+
+
+		/*O número de dias após descartar a informação de retorno d membro. Se nenhum bounce novo 
+		 *for recebido interinamente. Este valor deverá ser um número.
+		 *Resposta:7
+		 */
+		'bounce_info_stale_after' => '7',
+
+		/*Quantos alertas Seu cadastro está desativado o membro da lista deverá receber antes do endereço ser removido
+		 *da lista de discussão. Ajuste o valor para 0 para remover o endereço imediatamente da lista uma vez que sua pontuação
+		 *de bounce exceder o valor definido. Este valor deverá ser um número.
+		 *Resposta:0
+		 */
+		'bounce_you_are_disabled_warnings' => '0',
+
+		/*O número de dias antes de enviar os alertas Seu cadastro está desativado. Este valor deverá ser um número.
+		 *Resposta:0
+		 */
+		'bounce_you_are_disabled_warnings_interval' => '0',
+
+		/*O Mailman deverá te enviar, o dono da lista, quaisquer mensagens de bounce que falharam ao ser detectadas
+		 *pelo processador de bounces? Sim é recomendado.
+		 *Resposta:Não
+		 */
+		'bounce_unrecognized_goes_to_list_owner' => '0',
+
+		/*O Mailman deverá te notificar, o dono da lista, quando os bounces fazem a inscrição da lista ser desativada?
+		 *Resposta:Não
+		 */
+		'bounce_notify_owner_on_disable' => '0',
+
+		/*O Mailman deverá te notificar, o dono da lista, quando os bounces fizerem um membro ser descadastrado
+		 *Resposta:Não
+		 */
+		'bounce_notify_owner_on_removal' => '0',
+
+	        'submit' => 'Send'
+            ]
+        ]);
+
+        return;
+    }
+
 
 }
 

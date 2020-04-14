@@ -580,7 +580,7 @@ class MailmanAPI {
     /**
      * Set nondigest configuration
      */
-    public function configNondigest() {
+    public function configNonDigest() {
         $response = $this->client->request('POST', $this->mailmanURL . '/nondigest', [
             'form_params' => [
 

@@ -399,9 +399,7 @@ class MailmanAPI {
 		 *Resposta:Esconder o endereço do membro / Não enviar uma cópia da própria postagem do membro / Filtrar mensagens
 		 *duplicadas de membros da lista (se possível)
 		 */
-		'new_member_options' => 'hide',
-		'new_member_options' => 'notmetoo',
-		'new_member_options' => 'nodupes',
+		'new_member_options' => array('hide', 'notmetoo', 'nodupes'),
 		/*(Filtro Administrivia) Verifica postagens e intercepta aquelas que se parecem com requisições administrativas.
 		 *Resposta:Não
 		 */

@@ -125,7 +125,7 @@ class MailmanAPI {
      */
     public function addMembers($members) {
 
-        $token = $this->getCSRFToken("add");
+        $token = $this->getCSRFToken("members/add");
 
         $response = $this->client->request('POST', $this->mailmanURL . '/members/add', [
             'form_params' => [
@@ -151,7 +151,7 @@ class MailmanAPI {
      */
     public function removeMembers($members) {
 
-        $token = $this->getCSRFToken("remove");
+        $token = $this->getCSRFToken("members/remove");
 
         $response = $this->client->request('POST', $this->mailmanURL . '/members/remove', [
             'form_params' => [
@@ -176,7 +176,7 @@ class MailmanAPI {
      */
     public function changeMember($memberFrom, $memberTo) {
 
-        $token = $this->getCSRFToken("change");
+        $token = $this->getCSRFToken("members/change");
         $response = $this->client->request('POST', $this->mailmanURL . '/members/change', [
             'form_params' => [
                 'csrf_token' => $token,
@@ -248,7 +248,7 @@ class MailmanAPI {
      */
     private function getCSRFToken($page) {
 
-        $response = $this->client->request('GET', $this->mailmanURL . '/members');
+        $response = $this->client->request('GET', $this->mailmanURL . '/' . $page);
 
         $dom = new \DOMDocument('1.0', 'UTF-8');
 
@@ -274,13 +274,15 @@ class MailmanAPI {
      */
     public function configPrivacySender($nonmembers) {
 
+        $token = $this->getCSRFToken("privacy/sender");
         $response = $this->client->request('POST', $this->mailmanURL . '/privacy/sender', [
             'form_params' => [
+                'csrf_token' => $token,
               /* Por padrão, as postagens de novos membros da lista devem ser moderadas? 
                *  Resposta: Sim*/
-              'default_member_moderation' => '1',
+                'default_member_moderation' => '1',
 
-              'member_moderation_action' => '1',
+                'member_moderation_action' => '1',
 
                 'member_moderation_notice' => '',
                 'accept_these_nonmembers' => join(chr(10), $nonmembers),
@@ -295,146 +297,149 @@ class MailmanAPI {
             ]
         ]);
 
-        return;
+        return $response;
     }
 
      /*
      * Set general configuration
      */
     public function configGeneral($real_name,$owner,$subject_prefix) {
+        $token = $this->getCSRFToken("general");
+
         $response = $this->client->request('POST', $this->mailmanURL . '/general', [
             'form_params' => [
-        /*O nome público da lista (faça somente modificações capitalizadas).
-         * Resposta: eventosdf_fflch
-         */
-        'real_name' => $real_name,
-        /*O endereço de email do administrador da lista. São permitidos múltiplos endereços:
-         */
-        'owner' => $owner,
-        /*O endereço de email do moderador da lista. No caso de múltiplos endereços de moderador:
-         */
-        'moderator' => $owner,
-        /*Uma frase resumo identificando esta lista.
-         *Resposta:
-         */
-        'description' => '',
-        /*Uma descrição introdutória - em poucos parágrafos - sobre a lista. Ela será incluída, como html, 
-         *no topo da página listinfo. O pressionamento de enter finaliza um parágrafo 
-         *- veja os detalhes para mais informações.
-         *Resposta:
-         */
-                'info' => '',
-        /*Prefixo colocado na linha de assunto das postagens nas listas.
-         *Resposta:[EventosDF]
-         */
-                'subject_prefix' => "[{$subject_prefix}]",
-        /*Ocultar o remetente da mensagem, substituindo-o pelo endereço do nome da lista (Remove o campo From, Sender e Reply-To)
-         *Resposta:Não
-         */
-        'anonymous_list' => '0',
-        /*Qualquer cabeçalho Reply-To: encontrado na mensagem original deverá ser retirados? 
-         *Caso isto aconteça, isto será feito mesmo que o cabeçalho Reply-To: seja adicionado ou não pelo Mailman.
-         *Resposta:Não
-         */
-        'first_strip_reply_to' => '0',
-        /*Onde as respostas para as mensagens desta lista deverão ser direcionadas? 
-         *Remetente é extremamente recomendado para a maioria das listas de discussão.
-         *Resposta:Remetente
-         */
-        'reply_goes_to_list' => '0',
-        /*Cabeçalho Reply-To: explicito.
-         *Resposta:
-         */
-        'reply_to_address' => '',
-        /*Enviar lembretes de senhas para o endereço, eg, "-owner" ao invés de diretamente para o usuário.
-         *Resposta:Sim
-         */
-        'umbrella_list' => '1',
-        /*Sufixo que será usado quando esta lista for cascateada para outras listas, 
-         *de acordo com a configuração anterior "umbrella_list".
-         *Resposta:-owner
-         */
-        'umbrella_member_suffix' => '-owner',
-        /*Enviar lembretes mensais de senha?
-         *Resposta:Não
-         */
-        'send_reminders' => '0',
-        /*Texto específico da lista adicionado a mensagem de boas vindas do novo inscrito
-         *Resposta:
-         */
-        'welcome_msg' => '',
-        /*Enviar mensagem de boas vindas para novos membros inscritos?
-         *Resposta:Não
-         */
-        'send_welcome_msg' => '0',
-        /*Texto que será enviado a pessoas deixando a lista. Caso esteja vazio, 
-         *nenhum texto especial será adicionado a mensagem de remoção.
-         *Resposta:Sua inscrição nesta lista foi cancelada.
-         */
-        'goodbye_msg' => 'Sua inscrição nesta lista foi cancelada.',
-        /*Enviar mensagens de boas vindas para membros quando eles são desinscritos.
-         *Resposta:Não
-         */
-        'send_goodbye_msg' => '0',
-        /*Os moderadores de lista devem obter uma notificação imediata de novas requisição, 
-         *assim como também as notícias diárias coletadas?
-         *Resposta:Não
-         */
-        'admin_immed_notify' => '0',
-        /*O administrador deverá receber notificações de inscrições e desinscrições?
-         *Resposta:Não
-         */
-        'admin_notify_mchanges' => '0',
-        /*Enviar um email para o remetente quando sua postagem está aguardando aprovação?
-         *Resposta:Não
-         */
-        'respond_to_post_requests' => '0',
-        /*Moderação de emergência para o tráfego de todas as listas:
-         *Resposta:Não
-         */
-        'emergency' => '0',
-        /*Opções padrões para novos membros entrando nesta lista.
-         *Resposta:Esconder o endereço do membro / Não enviar uma cópia da própria postagem do membro / Filtrar mensagens
-         *duplicadas de membros da lista (se possível)
-         */
-        //'new_member_options' => array('hide', 'notmetoo', 'nodupes'),
-        /*(Filtro Administrivia) Verifica postagens e intercepta aquelas que se parecem com requisições administrativas.
-         *Resposta:Não
-         */
-        'administrivia' => '0',
-        /*Tamanho máximo em kilobytes (KB) do corpo da mensagem. Use 0 para não ter limite.
-         *Resposta:0
-         */
-        'max_message_size' => '0',
-        /*Maximum number of members to show on one page of the Membership List.
-         *Resposta:100
-         */
-        'admin_member_chunksize' => '100',
-        /*Nome de máquina que esta listas prefere para emails.
-         *Resposta:listas.usp.br
-         */
-        'host_name' => 'listas.usp.br',
-        /*As mensagens desta lista de discussão devem incluir os cabeçalhos da RFC 2369 
-         *(i.e. List-*? Sim é altamente recomendável.
-         *Resposta:Não
-         */
-        'include_rfc2369_headers' => '0',
-        /*As postagens devem incluir o cabeçalho List-Post:?
-         *Resposta:Não
-         */
-        'include_list_post_header' => '0',
-        /*Should the Sender header be rewritten for this mailing list to avoid stray bounces? Yes is recommended.
-         *Resposta:Sim
-         */
-        'include_sender_header' => '1',
-        /*Descartar mensagens mantidas que ultrapassam esta quantidade de dias. Use 0 para não descartar automaticamente.
-         *Resposta:1
-         */
-        'max_days_to_hold' => '1',
-        'submit' => 'Send'
+                'csrf_token' => $token,
+                /*O nome público da lista (faça somente modificações capitalizadas).
+                 * Resposta: eventosdf_fflch
+                 */
+                'real_name' => $real_name,
+                /*O endereço de email do administrador da lista. São permitidos múltiplos endereços:
+                 */
+                'owner' => $owner,
+                /*O endereço de email do moderador da lista. No caso de múltiplos endereços de moderador:
+                 */
+                'moderator' => $owner,
+                /*Uma frase resumo identificando esta lista.
+                 *Resposta:
+                 */
+                'description' => '',
+                /*Uma descrição introdutória - em poucos parágrafos - sobre a lista. Ela será incluída, como html, 
+                 *no topo da página listinfo. O pressionamento de enter finaliza um parágrafo 
+                 *- veja os detalhes para mais informações.
+                 *Resposta:
+                 */
+                        'info' => '',
+                /*Prefixo colocado na linha de assunto das postagens nas listas.
+                 *Resposta:[EventosDF]
+                 */
+                        'subject_prefix' => "[{$subject_prefix}]",
+                /*Ocultar o remetente da mensagem, substituindo-o pelo endereço do nome da lista (Remove o campo From, Sender e Reply-To)
+                 *Resposta:Não
+                 */
+                'anonymous_list' => '0',
+                /*Qualquer cabeçalho Reply-To: encontrado na mensagem original deverá ser retirados? 
+                 *Caso isto aconteça, isto será feito mesmo que o cabeçalho Reply-To: seja adicionado ou não pelo Mailman.
+                 *Resposta:Não
+                 */
+                'first_strip_reply_to' => '0',
+                /*Onde as respostas para as mensagens desta lista deverão ser direcionadas? 
+                 *Remetente é extremamente recomendado para a maioria das listas de discussão.
+                 *Resposta:Remetente
+                 */
+                'reply_goes_to_list' => '0',
+                /*Cabeçalho Reply-To: explicito.
+                 *Resposta:
+                 */
+                'reply_to_address' => '',
+                /*Enviar lembretes de senhas para o endereço, eg, "-owner" ao invés de diretamente para o usuário.
+                 *Resposta:Sim
+                 */
+                'umbrella_list' => '1',
+                /*Sufixo que será usado quando esta lista for cascateada para outras listas, 
+                 *de acordo com a configuração anterior "umbrella_list".
+                 *Resposta:-owner
+                 */
+                'umbrella_member_suffix' => '-owner',
+                /*Enviar lembretes mensais de senha?
+                 *Resposta:Não
+                 */
+                'send_reminders' => '0',
+                /*Texto específico da lista adicionado a mensagem de boas vindas do novo inscrito
+                 *Resposta:
+                 */
+                'welcome_msg' => '',
+                /*Enviar mensagem de boas vindas para novos membros inscritos?
+                 *Resposta:Não
+                 */
+                'send_welcome_msg' => '0',
+                /*Texto que será enviado a pessoas deixando a lista. Caso esteja vazio, 
+                 *nenhum texto especial será adicionado a mensagem de remoção.
+                 *Resposta:Sua inscrição nesta lista foi cancelada.
+                 */
+                'goodbye_msg' => 'Sua inscrição nesta lista foi cancelada.',
+                /*Enviar mensagens de boas vindas para membros quando eles são desinscritos.
+                 *Resposta:Não
+                 */
+                'send_goodbye_msg' => '0',
+                /*Os moderadores de lista devem obter uma notificação imediata de novas requisição, 
+                 *assim como também as notícias diárias coletadas?
+                 *Resposta:Não
+                 */
+                'admin_immed_notify' => '0',
+                /*O administrador deverá receber notificações de inscrições e desinscrições?
+                 *Resposta:Não
+                 */
+                'admin_notify_mchanges' => '0',
+                /*Enviar um email para o remetente quando sua postagem está aguardando aprovação?
+                 *Resposta:Não
+                 */
+                'respond_to_post_requests' => '0',
+                /*Moderação de emergência para o tráfego de todas as listas:
+                 *Resposta:Não
+                 */
+                'emergency' => '0',
+                /*Opções padrões para novos membros entrando nesta lista.
+                 *Resposta:Esconder o endereço do membro / Não enviar uma cópia da própria postagem do membro / Filtrar mensagens
+                 *duplicadas de membros da lista (se possível)
+                 */
+                //'new_member_options' => array('hide', 'notmetoo', 'nodupes'),
+                /*(Filtro Administrivia) Verifica postagens e intercepta aquelas que se parecem com requisições administrativas.
+                 *Resposta:Não
+                 */
+                'administrivia' => '0',
+                /*Tamanho máximo em kilobytes (KB) do corpo da mensagem. Use 0 para não ter limite.
+                 *Resposta:0
+                 */
+                'max_message_size' => '0',
+                /*Maximum number of members to show on one page of the Membership List.
+                 *Resposta:100
+                 */
+                'admin_member_chunksize' => '100',
+                /*Nome de máquina que esta listas prefere para emails.
+                 *Resposta:listas.usp.br
+                 */
+                'host_name' => 'listas.usp.br',
+                /*As mensagens desta lista de discussão devem incluir os cabeçalhos da RFC 2369 
+                 *(i.e. List-*? Sim é altamente recomendável.
+                 *Resposta:Não
+                 */
+                'include_rfc2369_headers' => '0',
+                /*As postagens devem incluir o cabeçalho List-Post:?
+                 *Resposta:Não
+                 */
+                'include_list_post_header' => '0',
+                /*Should the Sender header be rewritten for this mailing list to avoid stray bounces? Yes is recommended.
+                 *Resposta:Sim
+                 */
+                'include_sender_header' => '1',
+                /*Descartar mensagens mantidas que ultrapassam esta quantidade de dias. Use 0 para não descartar automaticamente.
+                 *Resposta:1
+                 */
+                'max_days_to_hold' => '1',
+                'submit' => 'Send'
         ]
     ]);
-        return;
+        return $response;
     }
 
 
@@ -442,50 +447,54 @@ class MailmanAPI {
      * Set privacy/subscribing configuration
      */
     public function configPrivacySubscribing() {
+        $token = $this->getCSRFToken("privacy/subscribing");
         $response = $this->client->request('POST', $this->mailmanURL . '/privacy/subscribing', [
             'form_params' => [
-        /*Avisar esta lista quando pessoas perguntarem que listas estão nesta máquina?
-         *Resposta:Não
-         */
-        'advertised' => '0',
-    
-        /*Que passos são requeridos para a inscrição?
-         *Resposta:Confirmar e aprovar
-         */
-        'subscribe_policy' => '2',
-    
-        /*É requerida a aprovação do moderador para requisições de remoção? (Não é recomendado).
-         *Resposta:Não
-         */
-        'unsubscribe_policy' => '0',
-    
-        /*Lista de endereços que estão banidos de serem membros desta lista de discussão.
-         *Resposta:
-         */
-        'ban_list' => '',
-    
-        /*Quem poderá ver a lista de inscrição?
-         *Resposta:Somente administradores da lista
-         */
-        'private_roster' => '2',
-    
-        /*Mostra endereços de membros assim eles não serão reconhecidos diretamente como endereços de email?
-         *Resposta:Sim
-         */
-        'obscure_addresses' => '1',
+                'csrf_token' => $token,
+                /*Avisar esta lista quando pessoas perguntarem que listas estão nesta máquina?
+                 *Resposta:Não
+                 */
+                'advertised' => '0',
+            
+                /*Que passos são requeridos para a inscrição?
+                 *Resposta:Confirmar e aprovar
+                 */
+                'subscribe_policy' => '2',
+            
+                /*É requerida a aprovação do moderador para requisições de remoção? (Não é recomendado).
+                 *Resposta:Não
+                 */
+                'unsubscribe_policy' => '0',
+            
+                /*Lista de endereços que estão banidos de serem membros desta lista de discussão.
+                 *Resposta:
+                 */
+                'ban_list' => '',
+            
+                /*Quem poderá ver a lista de inscrição?
+                 *Resposta:Somente administradores da lista
+                 */
+                'private_roster' => '2',
+            
+                /*Mostra endereços de membros assim eles não serão reconhecidos diretamente como endereços de email?
+                 *Resposta:Sim
+                 */
+                 'obscure_addresses' => '1',
                 'submit' => 'Send'
             ]
         ]);
 
-        return;
+        return $response;
     }
 
     /**
      * Set privacy/recipient configuration
      */
     public function configPrivacyRecipient() {
+        $token = $this->getCSRFToken("privacy/recipient");
         $response = $this->client->request('POST', $this->mailmanURL . '/privacy/recipient', [
             'form_params' => [
+                'csrf_token' => $token,
                 /* As postagens devem ter o nome da lista no campo destino (to, cc) 
                  * da lista (ou estar junto de nomes de aliases, especificados abaixo)?
                  * Resposta: Não
@@ -505,16 +514,17 @@ class MailmanAPI {
             ]
         ]);
 
-        return;
+        return $response;
     }
 
     /**
      * Set digest configuration
      */
     public function configDigest() {
+        $token = $this->getCSRFToken("digest");
         $response = $this->client->request('POST', $this->mailmanURL . '/digest', [
             'form_params' => [
-
+                'csrf_token' => $token,
                 /*Os membros da lista podem receber o tráfego da lista dividido em digests?
          * Resposta:Sim
                  */
@@ -569,15 +579,17 @@ class MailmanAPI {
             ]
         ]);
 
-        return;
+        return $response;
     }
 
     /**
      * Set nondigest configuration
      */
     public function configNonDigest() {
+        $token = $this->getCSRFToken("nondigest");
         $response = $this->client->request('POST', $this->mailmanURL . '/nondigest', [
             'form_params' => [
+                'csrf_token' => $token,
 
         /*Os inscritos na lista podem receber um email imediatamente, ao invés de digests em lote?
          *Resposta:Sim
@@ -615,70 +627,71 @@ class MailmanAPI {
             ]
         ]);
 
-        return;
+        return $response;
     }
 
     /**
      * Set bounce configuration
      */
     public function configBounce() {
+        $token = $this->getCSRFToken("bounce");
+
         $response = $this->client->request('POST', $this->mailmanURL . '/bounce', [
             'form_params' => [
-
-        /*O Mailman deverá fazer processamento automático de retornos?
-         *Resposta:Sim
-         */
-        'bounce_processing' => '1',
-
-
-        /*O número máximo de retornos antes de desativar a inscrição do membro. Este valor pode ser 
-         *um número de ponto flutuante.
-         *Resposta:5.0
-         */
-        'bounce_score_threshold' => '5.0',
+                'csrf_token' => $token,
+                /*O Mailman deverá fazer processamento automático de retornos?
+                 *Resposta:Sim
+                 */
+                'bounce_processing' => '1',
 
 
-        /*O número de dias após descartar a informação de retorno d membro. Se nenhum bounce novo 
-         *for recebido interinamente. Este valor deverá ser um número.
-         *Resposta:7
-         */
-        'bounce_info_stale_after' => '7',
+                /*O número máximo de retornos antes de desativar a inscrição do membro. Este valor pode ser 
+                 *um número de ponto flutuante.
+                 *Resposta:5.0
+                 */
+                'bounce_score_threshold' => '5.0',
 
-        /*Quantos alertas Seu cadastro está desativado o membro da lista deverá receber antes do endereço ser removido
-         *da lista de discussão. Ajuste o valor para 0 para remover o endereço imediatamente da lista uma vez que sua pontuação
-         *de bounce exceder o valor definido. Este valor deverá ser um número.
-         *Resposta:0
-         */
-        'bounce_you_are_disabled_warnings' => '0',
 
-        /*O número de dias antes de enviar os alertas Seu cadastro está desativado. Este valor deverá ser um número.
-         *Resposta:0
-         */
-        'bounce_you_are_disabled_warnings_interval' => '0',
+                /*O número de dias após descartar a informação de retorno d membro. Se nenhum bounce novo 
+                 *for recebido interinamente. Este valor deverá ser um número.
+                 *Resposta:7
+                 */
+                'bounce_info_stale_after' => '7',
 
-        /*O Mailman deverá te enviar, o dono da lista, quaisquer mensagens de bounce que falharam ao ser detectadas
-         *pelo processador de bounces? Sim é recomendado.
-         *Resposta:Não
-         */
-        'bounce_unrecognized_goes_to_list_owner' => '0',
+                /*Quantos alertas Seu cadastro está desativado o membro da lista deverá receber antes do endereço ser removido
+                 *da lista de discussão. Ajuste o valor para 0 para remover o endereço imediatamente da lista uma vez que sua pontuação
+                 *de bounce exceder o valor definido. Este valor deverá ser um número.
+                 *Resposta:0
+                 */
+                'bounce_you_are_disabled_warnings' => '0',
 
-        /*O Mailman deverá te notificar, o dono da lista, quando os bounces fazem a inscrição da lista ser desativada?
-         *Resposta:Não
-         */
-        'bounce_notify_owner_on_disable' => '0',
+                /*O número de dias antes de enviar os alertas Seu cadastro está desativado. Este valor deverá ser um número.
+                 *Resposta:0
+                 */
+                'bounce_you_are_disabled_warnings_interval' => '0',
 
-        /*O Mailman deverá te notificar, o dono da lista, quando os bounces fizerem um membro ser descadastrado
-         *Resposta:Não
-         */
-        'bounce_notify_owner_on_removal' => '0',
+                /*O Mailman deverá te enviar, o dono da lista, quaisquer mensagens de bounce que falharam ao ser detectadas
+                 *pelo processador de bounces? Sim é recomendado.
+                 *Resposta:Não
+                 */
+                'bounce_unrecognized_goes_to_list_owner' => '0',
 
-            'submit' => 'Send'
-            ]
-        ]);
+                /*O Mailman deverá te notificar, o dono da lista, quando os bounces fazem a inscrição da lista ser desativada?
+                 *Resposta:Não
+                 */
+                'bounce_notify_owner_on_disable' => '0',
 
-        return;
+                /*O Mailman deverá te notificar, o dono da lista, quando os bounces fizerem um membro ser descadastrado
+                 *Resposta:Não
+                 */
+                'bounce_notify_owner_on_removal' => '0',
+
+                    'submit' => 'Send'
+                    ]
+                ]);
+
+        return $response;
     }
-
 
 }
 

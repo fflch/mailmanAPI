@@ -24,9 +24,9 @@ class MailmanAPI {
         $this->client = new Client(['base_uri' => $this->mailmanURL, 'cookies' => true, 'verify' => $validade_ssl_certs]);
 
         $response = $this->client->request('POST', '', [
-    'form_params' => [
-        'adminpw' => $this->password
-        ]
+            'form_params' => [
+                'adminpw' => $this->password
+            ]
         ]);
 
     }
@@ -261,7 +261,6 @@ class MailmanAPI {
         libxml_use_internal_errors($internalErrors);
 
         $form = $dom->getElementsByTagName("form")[0];
-
         return $form->getElementsByTagName("input")[0]->getAttribute("value");
     }
 
@@ -303,7 +302,7 @@ class MailmanAPI {
      /*
      * Set general configuration
      */
-    public function configGeneral($real_name,$owner,$subject_prefix) {
+    public function configGeneral($real_name,$owner,$subject_prefix, $host_name = 'listas.usp.br') {
         $token = $this->getCSRFToken("general");
 
         $response = $this->client->request('POST', $this->mailmanURL . '/general', [
@@ -418,7 +417,7 @@ class MailmanAPI {
                 /*Nome de máquina que esta listas prefere para emails.
                  *Resposta:listas.usp.br
                  */
-                'host_name' => 'listas.usp.br',
+                'host_name' => $host_name,
                 /*As mensagens desta lista de discussão devem incluir os cabeçalhos da RFC 2369 
                  *(i.e. List-*? Sim é altamente recomendável.
                  *Resposta:Não
@@ -448,6 +447,7 @@ class MailmanAPI {
      */
     public function configPrivacySubscribing() {
         $token = $this->getCSRFToken("privacy/subscribing");
+
         $response = $this->client->request('POST', $this->mailmanURL . '/privacy/subscribing', [
             'form_params' => [
                 'csrf_token' => $token,
@@ -461,6 +461,11 @@ class MailmanAPI {
                  */
                 'subscribe_policy' => '2',
             
+                /**
+                 * List of addresses (or regexps) whose subscriptions do not require approval.
+                 */
+                'subscribe_auto_approval' => '',
+
                 /*É requerida a aprovação do moderador para requisições de remoção? (Não é recomendado).
                  *Resposta:Não
                  */
@@ -479,11 +484,10 @@ class MailmanAPI {
                 /*Mostra endereços de membros assim eles não serão reconhecidos diretamente como endereços de email?
                  *Resposta:Sim
                  */
-                 'obscure_addresses' => '1',
+                'obscure_addresses' => '1',
                 'submit' => 'Send'
             ]
         ]);
-
         return $response;
     }
 
@@ -501,19 +505,18 @@ class MailmanAPI {
                  */
                 'require_explicit_destination' => '0',
         
-        /*Nomes aliases (expressões) que qualificam os nomes de destinos to e cc para esta lista.
-         *Resposta:
-         */
+                /*Nomes aliases (expressões) que qualificam os nomes de destinos to e cc para esta lista.
+                *Resposta:
+                */
                 'acceptable_aliases' => '',
 
-        /*Pondo um limite aceitável no número de recipientes para postagem.
-         *Resposta: 0
-         */
+                /*Pondo um limite aceitável no número de recipientes para postagem.
+                *Resposta: 0
+                */
                 'max_num_recipients' => '0',
                 'submit' => 'Send'
-            ]
-        ]);
-
+                ]
+            ]);
         return $response;
     }
 
@@ -526,107 +529,107 @@ class MailmanAPI {
             'form_params' => [
                 'csrf_token' => $token,
                 /*Os membros da lista podem receber o tráfego da lista dividido em digests?
-         * Resposta:Sim
-                 */
-        'digestable' => '1',
+                * Resposta:Sim
+                */
+                'digestable' => '1',
 
                 /*Que modo de entrega é o padrão para novos usuários?
-         * Resposta:Regular
-                 */
-        'digest_is_default' => '0',
+                * Resposta:Regular
+                */
+                'digest_is_default' => '0',
 
                 /*Quando resolvendo digests, que formato é o padrão?
-         * Resposta:Puro
-                 */
-        'mime_is_default_digest' => '0',
+                * Resposta:Puro
+                */
+                'mime_is_default_digest' => '0',
 
                 /*Qual é o tamanho em OK que o digest deverá ter antes de ser enviado?
-         * Resposta:30
-                 */
-        'digest_size_threshhold' => '30',
+                * Resposta:30
+                */
+                'digest_size_threshhold' => '30',
 
                 /*O digest deverá ser despachado diariamente quando o tamanho dele não atingir o limite mínimo?
-         * Resposta:Sim
-                 */
-        'digest_send_periodic' => '1',
+                * Resposta:Sim
+                */
+                'digest_send_periodic' => '1',
 
-                /*Cabeçalho adicionado a cada digest
-         * Resposta:
-                 */
-        'digest_header' => '',
+                        /*Cabeçalho adicionado a cada digest
+                * Resposta:
+                        */
+                'digest_header' => '',
 
                 /*Legenda adicionado a cada digest
-         * Resposta:
-                 */
-        'digest_footer' => '',
+                * Resposta:
+                */
+                'digest_footer' => '',
 
-        /*Com que freqüência o volume do novo digest será iniciado?
-         * Resposta:Anual
-                 */
-        'digest_volume_frequency' => '0',
-        
-        /*O Mailman deve iniciar um novo volume digest.
-         * Resposta:Não
-                 */
-        '_new_volume' => '0',
+                /*Com que freqüência o volume do novo digest será iniciado?
+                * Resposta:Anual
+                */
+                'digest_volume_frequency' => '0',
+                
+                /*O Mailman deve iniciar um novo volume digest.
+                * Resposta:Não
+                */
+                '_new_volume' => '0',
 
-        /*O Mailman deve enviar o próximo digest agora, caso não esteja vazio?
-         * Resposta:Não
-                 */
-        '_send_digest_now' => '0',
-
+                /*O Mailman deve enviar o próximo digest agora, caso não esteja vazio?
+                * Resposta:Não
+                */
+                '_send_digest_now' => '0',
                 'submit' => 'Send'
             ]
         ]);
-
         return $response;
     }
 
     /**
      * Set nondigest configuration
      */
-    public function configNonDigest() {
+    public function configNonDigest($msg_footer='',$msg_header='') {
         $token = $this->getCSRFToken("nondigest");
         $response = $this->client->request('POST', $this->mailmanURL . '/nondigest', [
             'form_params' => [
                 'csrf_token' => $token,
+                /*Os inscritos na lista podem receber um email imediatamente, ao invés de digests em lote?
+                *Resposta:Sim
+                */
+                'nondigestable' => '1',
 
-        /*Os inscritos na lista podem receber um email imediatamente, ao invés de digests em lote?
-         *Resposta:Sim
-         */
-        'nondigestable' => '1',
+                /*Cabeçalho adicionado ao email enviado para membros regulares
+                *Resposta:
+                */
+                'msg_header' => $msg_header,
 
-        /*Cabeçalho adicionado ao email enviado para membros regulares
-         *Resposta:
-         */
-        'msg_header' => '',
+                /*Rodapé adicionado ao email enviado para os membros regulares da lista
+                *Resposta:
+                */
+                'msg_footer' => $msg_footer,
 
-        /*Rodapé adicionado ao email enviado para os membros regulares da lista
-         *Resposta:
-         */
-        'msg_footer' => '',
+                /*Fazer link de anexos de mensagens de entregas regulares?
+                *Resposta:Não
+                */
+                'scrub_nondigest' => '0',
 
-        /*Fazer link de anexos de mensagens de entregas regulares?
-         *Resposta:Não
-         */
-        'scrub_nondigest' => '0',
+                /*Other mailing lists on this site whose members are excluded from the regular (non-digest)
+                *delivery if those list addresses appear in a To: or Cc: header.
+                *Resposta:
+                */
+                'regular_exclude_lists' => '',
 
-        /*Other mailing lists on this site whose members are excluded from the regular (non-digest)
-         *delivery if those list addresses appear in a To: or Cc: header.
-         *Resposta:
-         */
-        'regular_exclude_lists' => '',
+                /**
+                 * Ignore regular_exclude_lists of which the poster is not a member.
+                 */
+                'regular_exclude_ignore' => 1,
 
-        /*Other mailing lists on this site whose members are included in the regular (non-digest)
-         *delivery if those list addresses don't appear in a To: or Cc: header.
-         *Resposta:
-         */
-        'regular_include_lists' => '',
-
-            'submit' => 'Send'
+                /*Other mailing lists on this site whose members are included in the regular (non-digest)
+                *delivery if those list addresses don't appear in a To: or Cc: header.
+                *Resposta:
+                */
+                'regular_include_lists' => '',
+                'submit' => 'Send'
             ]
         ]);
-
         return $response;
     }
 
@@ -643,7 +646,6 @@ class MailmanAPI {
                  *Resposta:Sim
                  */
                 'bounce_processing' => '1',
-
 
                 /*O número máximo de retornos antes de desativar a inscrição do membro. Este valor pode ser 
                  *um número de ponto flutuante.
@@ -676,6 +678,11 @@ class MailmanAPI {
                  */
                 'bounce_unrecognized_goes_to_list_owner' => '0',
 
+                /**
+                 * Should Mailman notify you, the list owner, when bounces cause a member's bounce score to be incremented?
+                 */
+                'bounce_notify_owner_on_bounce_increment' => '0',
+
                 /*O Mailman deverá te notificar, o dono da lista, quando os bounces fazem a inscrição da lista ser desativada?
                  *Resposta:Não
                  */
@@ -685,10 +692,9 @@ class MailmanAPI {
                  *Resposta:Não
                  */
                 'bounce_notify_owner_on_removal' => '0',
-
-                    'submit' => 'Send'
-                    ]
-                ]);
+                'submit' => 'Send'
+            ]
+        ]);
 
         return $response;
     }

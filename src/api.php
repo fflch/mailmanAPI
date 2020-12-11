@@ -31,7 +31,6 @@ class MailmanAPI {
 
     }
 
-
     /**
      * Return Array of all Members in a Mailman List
      */
@@ -138,6 +137,28 @@ class MailmanAPI {
             ]
         ]);
 
+
+        return $this->parseResultList($response->getBody());
+    }
+
+    /**
+     * Synv Members to a Mailman List
+     * @param $members
+     *  Array of Members that should be added
+     * @return
+     *  Array of Members that were successfully added
+     */
+    public function syncMembers($members) {
+
+        $token = $this->getCSRFToken("members/sync");
+
+        $response = $this->client->request('POST', $this->mailmanURL . '/members/sync', [
+            'form_params' => [
+                'csrf_token' => $token,
+                'memberlist' => join(chr(10), $members),
+                'setmemberopts_btn' => 'Submit Your Changes'
+            ]
+        ]);
 
         return $this->parseResultList($response->getBody());
     }
@@ -697,6 +718,59 @@ class MailmanAPI {
         ]);
 
         return $response;
+    }
+
+    /**
+     * Set archive configuration
+     */
+    public function configArchive() {
+        $token = $this->getCSRFToken("archive");
+        $response = $this->client->request('POST', $this->mailmanURL . '/archive', [
+            'form_params' => [
+                'csrf_token' => $token,
+                'archive' => '1',
+                'archive_private' => '1',
+                'archive_volume_frequency' => '0', # Yearly
+                'submit' => 'Send'
+            ]
+        ]);
+        return $response;
+    }
+
+    /**
+     * Get archive email in a yearly configuration
+     */
+    public function getArchive() {
+        $response = $this->client->request('GET', $this->mailmanURL . '/2020/thread.html');
+        #$response = $this->client->request('GET', 
+        #'https://listas.usp.br/mailman/private/eventosdf_fflch/2020/thread.html');
+
+/*
+        $dom = new \DOMDocument('1.0', 'UTF-8');
+
+        // set error level
+        $internalErrors = libxml_use_internal_errors(true);
+
+        $dom->loadHTML($response->getBody());
+
+        // Restore error level
+        libxml_use_internal_errors($internalErrors);
+
+        foreach($dom->getElementsByTagName("ul") as $ul){
+
+        }
+     
+        for ($i = 0; $i < $ul->length; $i++) {
+            $x = $ul[$i]->getElementsByTagName("li");
+            dd($x[1]->nodeValue);
+        }
+
+
+
+
+        dd($response->getBody()->getContents());
+        return $response;
+        */
     }
 
 }

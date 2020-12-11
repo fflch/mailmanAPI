@@ -414,7 +414,7 @@ class MailmanAPI {
                 /*Maximum number of members to show on one page of the Membership List.
                  *Resposta:20000
                  */
-                'admin_member_chunksize' => '20000',
+                'admin_member_chunksize' => '100000',
                 /*Nome de máquina que esta listas prefere para emails.
                  *Resposta:listas.usp.br
                  */

@@ -740,37 +740,20 @@ class MailmanAPI {
     /**
      * Get archive email in a yearly configuration
      */
-    public function getArchive() {
-        $response = $this->client->request('GET', $this->mailmanURL . '/2020/thread.html');
-        #$response = $this->client->request('GET', 
-        #'https://listas.usp.br/mailman/private/eventosdf_fflch/2020/thread.html');
+    public function getArchive($real_name, $year) {
+        $url = str_replace('admin','private',$this->mailmanURL);
 
-/*
-        $dom = new \DOMDocument('1.0', 'UTF-8');
+        $response = $this->client->request('GET', $url . "/{$year}/thread.html");
 
-        // set error level
-        $internalErrors = libxml_use_internal_errors(true);
-
-        $dom->loadHTML($response->getBody());
-
-        // Restore error level
-        libxml_use_internal_errors($internalErrors);
-
-        foreach($dom->getElementsByTagName("ul") as $ul){
-
-        }
-     
-        for ($i = 0; $i < $ul->length; $i++) {
-            $x = $ul[$i]->getElementsByTagName("li");
-            dd($x[1]->nodeValue);
+        $titles = [];
+        $lines = explode("\n",$response->getBody()->getContents());
+        foreach($lines as $line){
+            if (str_contains($line, "[{$real_name}]")) {
+                $titles[] = str_replace("[{$real_name}] ",'',strip_tags($line));
+            }
         }
 
-
-
-
-        dd($response->getBody()->getContents());
-        return $response;
-        */
+        return $titles;
     }
 
 }

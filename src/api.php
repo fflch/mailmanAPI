@@ -567,7 +567,7 @@ class MailmanAPI {
                 /*Qual é o tamanho em OK que o digest deverá ter antes de ser enviado?
                 * Resposta:30
                 */
-                'digest_size_threshhold' => '30',
+                'digest_size_threshhold' => '0',
 
                 /*O digest deverá ser despachado diariamente quando o tamanho dele não atingir o limite mínimo?
                 * Resposta:Sim

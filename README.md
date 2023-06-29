@@ -1,62 +1,8 @@
-# mailmanAPI
-A Simple PHP API to work with Mailman 2.x Mailinglists
+# mailmanAPI (fork)
 
-As Mailman 2.x seems not to offer a proper API, this Mailman API provides some basic functionality to work with Mailman.
-Be aware, the library only wrappes around the HTML Forms of the Mailman API Site. It parses the HTTP Responses & HTML Pages, for Authentication Cookies, CSRF TOKEN and then posts to the FORM action url.
+## 1) [Language options] - Português
 
-Testes with Mailman 2.1.20, no guarantee to work with other versions.
-
-
-## Features
-- Get all Members of a Maillist
-- Add Members to a Maillist
-- Remove Members from a Maillist
-- Change Address of a Member
-
-## Requirements
-- Socket enabled or curl extension installed
-- PHP 5.3+
-
-## Installation
-```
-composer require splattner/mailmanapi:^1.2
-```
-
-## Usage
-
-You need the URL for your Mailman Mailist e.g. http://{{domain}}/mailman/admin/{{maillistName}} and your Administration Password for the Maillist.
-
-* [Get All Members](#get-all-members)
-* [Add Members](#add-members)
-* [Remove Members](#remove-members)
-* [Change Members](#change-member)
-
-
-### Get All Members
-
-```
-$mailman = new MailmanAPI($mailManBaseURL,$adminPW);
-$allMembers = $mailman->getMemberlist();
-```
-
-### Add Members
-
-```
-$mailman = new MailmanAPI($mailManBaseURL,$adminPW);
-$mailman->addMembers(["member1@domain.com","member2@domain.com"]);
-```
-
-### Remove Members
-
-```
-$mailman = new MailmanAPI($mailManBaseURL,$adminPW);
-$mailman->removeMembers(["member1@domain.com","member2@domain.com"]);
-```
-
-
-1) [Language options] - Português
-
-2) [Opções Gerais]
+## 2) [Opções Gerais]
 
 Enviar lembretes mensais de senha?
 Não
@@ -79,16 +25,16 @@ Não
 Tamanho máximo em kilobytes (KB) do corpo da mensagem. Use 0 para não ter limite.
 0
 
-3) [Opções não digest]
+## 3) [Opções não digest]
 Os inscritos na lista podem receber um email imediatamente, ao invés de digests em lote?
 Sim
 
-4) [Opções digest]
+## 4) [Opções digest]
 
 Que modo de entrega é o padrão para novos usuários?
 Regular
 
-5) [Regras de inscrição]
+## 5) [Regras de inscrição]
 
 Avisar esta lista quando pessoas perguntarem que listas estão nesta máquina?
 Não
@@ -99,7 +45,7 @@ Confirmar e aprovar
 Quem poderá ver a lista de inscrição?
 Somente administradores da lista
 
-6) [Filtros de remetentes]
+## 6) [Filtros de remetentes]
 
 Por padrão, as postagens de novos membros da lista devem ser moderadas?
 Sim
@@ -119,7 +65,7 @@ Você
 As mensagens para os não-membros, que são automaticamente descartadas, devem ser redirecionadas ao moderador da lista?
 Não
 
-7) [Processamento de Retorno]
+## 7) [Processamento de Retorno]
 
 O Mailman deverá te enviar, o dono da lista, quaisquer mensagens de bounce que falharam ao ser detectadas pelo processador de bounces? Sim é recomendado.
 Não
@@ -133,17 +79,17 @@ Não
 O Mailman deverá te notificar, o dono da lista, quando as rejeições fizerem um membro ter a inscrição cancelada?
 Não
 
-8) [Auto-Resposta]
+## 8) [Auto-Resposta]
 
 O Mailman deve enviar uma auto-resposta para os membros que postam na lista de discussão?
 Não
 
-9) [Filtragem de Conteúdo]
+## 9) [Filtragem de Conteúdo]
 
 Ação a ser tomada quando uma mensagem conferir com o conteúdo das regras de filtragem.
 Descartar
 
-10)  Gerenciamento de membros.
+## 10)  Gerenciamento de membros.
 
 - Lista de membros
 - Inscrição em massa
@@ -153,17 +99,4 @@ Descartar
 
 
 
-
-
-
-
-
-
-
-
-### Change Member
-
-```
-$mailman = new MailmanAPI($mailManBaseURL,$adminPW);
-$mailman->changeMember("memberold@domain.com","membernew@domain.com");
 ```
